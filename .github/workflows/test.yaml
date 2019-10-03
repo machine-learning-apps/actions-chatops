@@ -12,7 +12,7 @@ jobs:
         with:
           APP_PEM: ${{ secrets.APP_PEM }}
           APP_ID: ${{ secrets.APP_ID }}
-          TRIGGER_PHRASE: "making"
+          TRIGGER_PHRASE: "/test-trigger-comment"
           INDICATOR_LABEL: "test-label"
           TEST_EVENT_PATH: "tests/pr_comment_payload.json"
 
@@ -21,6 +21,7 @@ jobs:
           cd $GITHUB_WORKSPACE
           echo ${PASSWORD} | docker login -u $USERNAME --password-stdin
           docker build -t hamelsmu/chatops-workaround -f prebuild.Dockerfile .
+          docker push hamelsmu/chatops-workaround 
         env:
           USERNAME: ${{ secrets.DOCKER_USERNAME }}
           PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
