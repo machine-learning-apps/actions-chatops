@@ -1,5 +1,5 @@
 name: 'ChatOps Via PR Labels'
-description: Trigger PR labels with chatops and a GitHub App, which is a work-around to trigger downstream Actions with the right context.  This is because issue comments trigger workflows to run on the default branch only, whereas pull_request labels trigger workflows on the PR's branch.
+description: Trigger PR labels with chatops and a GitHub App, which is a work-around to trigger downstream Actions with the right context.
 author: Hamel Husain
 inputs:
   APP_PEM:
