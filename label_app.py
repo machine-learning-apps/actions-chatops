@@ -3,9 +3,20 @@ from pathlib import Path
 from cryptography.hazmat.backends import default_backend
 import time
 import json
+import os
 import jwt
 import requests
-from typing import List
+
+def get_issue_handle(owner, repo, pem, app_id, issue_number):
+    "Returns handle for the issue (which is also the PR)"
+    with open('app.pem', 'w') as f:
+        f.write(pem)
+    app = GitHubApp(pem_path='app.pem', app_id=app_id)
+    i_id = app.get_installation_id(owner=owner, repo=repo)
+    client = app.get_installation(i_id)
+    issue_handle = client.issue(username=owner, repository=repo, number=issue_number)
+    return issue_handle
+    
 
 class GitHubApp(GitHub):
     """
@@ -79,6 +90,7 @@ class GitHubApp(GitHub):
             raise Exception(f'Status code : {response.status_code}, {response.json()}')
         return response.json()['token']
 
+
     def _extract(self, d, keys):
         "extract selected keys from a dict."
         return dict((k, d[k]) for k in keys if k in d)
@@ -89,3 +101,37 @@ class GitHubApp(GitHub):
     def generate_installation_curl(self, endpoint):
         iat = self.get_installation_access_token()
         print(f'curl -i -H "Authorization: token {iat}" -H "Accept: application/vnd.github.machine-man-preview+json" https://api.github.com{endpoint}')
+
+if __name__ == "__main__":
+    pem = os.getenv('INPUT_APP_PEM')
+    app_id = os.getenv('INPUT_APP_ID')
+    trigger_phrase = os.getenv('INPUT_TRIGGER_PHRASE')
+    trigger_label = os.getenv('INPUT_INDICATOR_LABEL')
+    payload_fname = os.getenv('GITHUB_EVENT_PATH')
+    test_payload_fname = os.getenv('INPUT_TEST_EVENT_PATH')
+    owner, repo = os.getenv('GITHUB_REPOSITORY').split('/')
+
+    assert pem, "Error: must supply input APP_PEM"
+    assert app_id, "Error: must supply input APP_ID"
+    assert trigger_phrase, "Error: must supply input TRIGGER_PHRASE"
+    assert trigger_label, "Error: must supply input INDICATOR_LABEL"
+    assert payload_fname or test_payload_fname, "Error: System environment variable GITHUB_EVENT_PATH or TEST_EVENT_PATH not found"
+
+    fname = test_payload_fname if not payload_fname else payload_fname
+    owner, repo = os.getenv('GITHUB_REPOSITORY').split('/')
+    
+    with open(fname, 'r') as f:
+        payload = json.load(f)
+
+    issue_data = payload['issue']
+    issue_number = issue_data['number']
+    comment_data = payload['comment']
+    
+    assert 'issue' in payload and 'comment' in payload, 'Error: this action is designed to operate on the event issue_comment only.'
+
+    if 'pull_request' in issue_data and trigger_phrase in comment_data['body']:
+        issue_handle = get_issue_handle(owner=owner, repo=repo, pem=pem, app_id=app_id, issue_number=issue_number)
+        result = issue_handle.add_labels(trigger_label)
+        labels = [x.name for x in result]
+        assert result and trigger_label in labels, "issue annotation on PR not successfull."
+        print(f'Successfully added label {trigger_label} to {issue_handle.state} PR: {issue_handle.html_url}')

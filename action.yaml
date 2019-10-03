@@ -1,0 +1,26 @@
+name: 'ChatOps Via PR Labels'
+description: Trigger PR labels with chatops and a GitHub App, which is a work-around to trigger downstream Actions with the right context.  This is because issue comments trigger workflows to run on the default branch only, whereas pull_request labels trigger workflows on the PR's branch.
+author: Hamel Husain
+inputs:
+  APP_PEM:
+    description: string version of your PEM file used to authenticate as a GitHub App
+    required: true
+  APP_ID:
+    description: you GITHUB App ID.
+    required: true
+  TRIGGER_PHRASE:
+    description: this is the phrase in a PR comment that you want to trigger downstream Actions.  Example - "/deploy-app-test"
+    required: true
+  INDICATOR_LABEL:
+    description: label that wil be added to the PR if a triggering comment is detected.  This is used to trigger downstream Actions with the right context of the PR.
+    required: true
+  TEST_EVENT_PATH:
+    description: An alternate place to fetch the payload for testing and debugging when making changes to this Action.  This is set to they system environment variable $GITHUB_EVENT_PATH by default.
+    require: false
+    default: ""
+branding:
+  color: 'blue'
+  icon: 'message-square'
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
