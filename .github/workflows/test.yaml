@@ -1,0 +1,22 @@
+
+name: Tests
+on: [push]
+
+jobs:
+  test-static-payload:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: test
+        uses: ./
+        with:
+          APP_PEM: mock_data/payload.json
+          APP_ID: ${{ secrets.GITHUB_TOKEN }}
+          TRIGGER_PHRASE: "making"
+          INDICATOR_LABEL: "test-label"
+          TEST_EVENT_PATH: "tests/pr_comment_payload.json"
+
+      - name: pre-build action image
+        run: |
+          cd $GITHUB_WORKSPACE
+          docker build -t hamelsmu/chatops-workaround -f prebuild.Dockerfile .
