@@ -10,8 +10,8 @@ jobs:
       - name: test
         uses: ./
         with:
-          APP_PEM: mock_data/payload.json
-          APP_ID: ${{ secrets.GITHUB_TOKEN }}
+          APP_PEM: ${{ secrets.APP_PEM }}
+          APP_ID: ${{ secrets.APP_ID }}
           TRIGGER_PHRASE: "making"
           INDICATOR_LABEL: "test-label"
           TEST_EVENT_PATH: "tests/pr_comment_payload.json"
