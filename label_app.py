@@ -117,7 +117,7 @@ if __name__ == "__main__":
     assert trigger_label, "Error: must supply input INDICATOR_LABEL"
     assert payload_fname or test_payload_fname, "Error: System environment variable GITHUB_EVENT_PATH or TEST_EVENT_PATH not found"
 
-    fname = test_payload_fname if not payload_fname else payload_fname
+    fname = payload_fname if not test_payload_fname else test_payload_fname
     owner, repo = os.getenv('GITHUB_REPOSITORY').split('/')
     
     with open(fname, 'r') as f:
