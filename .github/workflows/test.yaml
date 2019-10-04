@@ -6,16 +6,9 @@ jobs:
   test-static-payload:
     runs-on: ubuntu-latest
     steps:
+  
       - uses: actions/checkout@master
-      - name: test
-        uses: ./
-        with:
-          APP_PEM: ${{ secrets.APP_PEM }}
-          APP_ID: ${{ secrets.APP_ID }}
-          TRIGGER_PHRASE: "/test-trigger-comment"
-          INDICATOR_LABEL: "test-label"
-          TEST_EVENT_PATH: "tests/pr_comment_payload.json"
-
+        
       - name: pre-build action image
         run: |
           cd $GITHUB_WORKSPACE
@@ -25,3 +18,12 @@ jobs:
         env:
           USERNAME: ${{ secrets.DOCKER_USERNAME }}
           PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: test
+        uses: ./
+        with:
+          APP_PEM: ${{ secrets.APP_PEM }}
+          APP_ID: ${{ secrets.APP_ID }}
+          TRIGGER_PHRASE: "/test-trigger-comment"
+          INDICATOR_LABEL: "test-label"
+          TEST_EVENT_PATH: "tests/pr_comment_payload.json"
