@@ -4,7 +4,7 @@
 
 This action helps you trigger downstream actions with a custom command made via a comment in a pull request, otherwhise known as [ChatOps](https://www.pagerduty.com/blog/what-is-chatops/).  This action is uses a GitHub App to make an issue label that then can trigger an Action.  This is alternative to the [this Action](https://github.com/marketplace/actions/chatops-for-actions) that uses authenticates as a seperate GitHub App that adds a label you specify to your pull request.  The benefits of this are two-fold:  (1) Unlike a PR-Comment which [triggers Actions workflows on the default branch](https://help.github.com/en/articles/events-that-trigger-workflows#issue-comment-event-issue_comment), the label event will trigger Actions to run on the branch of the PR.  (2) This can prevent you from accidentally executing the chatops command twice as the label event will not fire if the PR is already labeled. 
 
-The reason this Action authenticates as a seperate GitHub app (whose authentication credentials you supply) is that you want the label applied on the PR to trigger downstream Actions and events created by GitHub Actions cannot trigger other Actions - therefore we use a GitHub App for this purpose.
+The reason this Action authenticates as a seperate GitHub app (whose authentication credentials you supply) is that you want the label applied on the PR to trigger downstream Actions.  Furthermore, events created by GitHub Actions cannot trigger other Actions - therefore we use a GitHub App for this purpose.
 
 ## Example Usage
 
