@@ -1,6 +1,6 @@
 ![Actions Status](https://github.com/machine-learning-apps/actions-chatops-workaround/workflows/Tests/badge.svg)
 
-# Trigger Actions With ChatOps via PR Labels (Workaround For ChatOps)
+# Trigger Actions With ChatOps via PR Labels
 
 This action helps you trigger downstream actions with a custom command made via a comment in a pull request, otherwhise known as [ChatOps](https://www.pagerduty.com/blog/what-is-chatops/).  This action is uses a GitHub App to make an issue label that then can trigger an Action.  This is alternative to the [this Action](https://github.com/marketplace/actions/chatops-for-actions) that uses authenticates as a seperate GitHub App that adds a label you specify to your pull request.  The benefits of this are two-fold:  (1) Unlike a PR-Comment which [triggers Actions workflows on the default branch](https://help.github.com/en/articles/events-that-trigger-workflows#issue-comment-event-issue_comment), the label event will trigger Actions to run on the branch of the PR.  (2) This can prevent you from accidentally executing the chatops command twice as the label event will not fire if the PR is already labeled. 
 
