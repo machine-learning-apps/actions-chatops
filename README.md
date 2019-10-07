@@ -42,9 +42,22 @@ A demonstration of this in action can be found on [this PR](https://github.com/m
 
   - `INDICATOR_LABEL`:
     - description: label that wil be added to the PR if a triggering comment is detected.  This is used to trigger downstream Actions with the right context of the PR.
-    - required: true
+    - required: false
+    - default: ""
 
   - `TEST_EVENT_PATH`:
     - description: An alternate place to fetch the payload for testing and debugging when making changes to this Action.  This is set to they system environment variable $GITHUB_EVENT_PATH by default.
     - require: false
-    default: ""
+    - default: ""
+
+
+## Outputs
+
+ - `TRAILING_LINE:`
+    - description: the text that immediately follows the triggering phrase that is on the same line.  For example,  "/trigger-phrase foo bar\n next line" will emit the value "foo bar" This is intended to be used as arguments for downstream actions.
+ - `TRAILING_TOKEN:`
+    - description: this is the next token that immediately follows the triggering phrase that is on the same line.  For example,  "/trigger-phrase foo bar" will emit the value "foo". This is intended to be used as arguments for downstream actions.
+ - `BOOL_TRIGGERED:`
+    - description: true or false depending on if the trigger phrase was detected and this is a pull request.
+ - `PULL_REQUEST_NUMBER:`
+    - description: the number of the pull request
