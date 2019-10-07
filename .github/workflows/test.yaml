@@ -66,7 +66,7 @@ jobs:
           import os
           assert os.getenv('TRAILING_LINE') == "foo bar"
           assert os.getenv('TRAILING_TOKEN') == "foo"
-          assert os.getenv('PULL_REQUEST_NUMBER') == '26'
+          assert os.getenv('PULL_REQUEST_NUMBER') == '3'
           assert os.getenv('BOOL_TRIGGERED') == 'True'
         shell: python
         env:
