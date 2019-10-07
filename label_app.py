@@ -110,7 +110,6 @@ if __name__ == "__main__":
     trigger_label = os.getenv('INPUT_INDICATOR_LABEL')
     payload_fname = os.getenv('GITHUB_EVENT_PATH')
     test_payload_fname = os.getenv('INPUT_TEST_EVENT_PATH')
-    owner, repo = os.getenv('GITHUB_REPOSITORY').split('/')
 
     assert pem, "Error: must supply input APP_PEM"
     assert app_id, "Error: must supply input APP_ID"

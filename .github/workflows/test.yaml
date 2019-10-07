@@ -11,29 +11,30 @@ jobs:
       
       - name: build-temp-container
         run: |
+          echo ${PASSWORD} | docker login -u $USERNAME --password-stdin
           docker build -t hamelsmu/chatops-workaround:temp -f prebuild.Dockerfile .
+          docker push hamelsmu/chatops-workaround:temp
+        env:
+          USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: test
-        run: |
-          docker run hamelsmu/chatops-workaround:temp
+        uses: docker://hamelsmu/chatops-workaround:temp
         env:
           INPUT_APP_PEM: ${{ secrets.APP_PEM }}
           INPUT_APP_ID: ${{ secrets.APP_ID }}
           INPUT_TRIGGER_PHRASE: "/test-trigger-comment"
           INPUT_INDICATOR_LABEL: "test-label"
           INPUT_TEST_EVENT_PATH: "tests/pr_comment_payload.json"
-          GITHUB_REPOSITORY: "machine-learning-apps/actions-ml-cicd"
 
       - name: emit-output
-        run: |
-          docker run hamelsmu/chatops-workaround:temp
+        uses: docker://hamelsmu/chatops-workaround:temp
         id: nolabel
         env:
           INPUT_APP_PEM: ${{ secrets.APP_PEM }}
           INPUT_APP_ID: ${{ secrets.APP_ID }}
           INPUT_TRIGGER_PHRASE: "/full-test-run"
           INPUT_TEST_EVENT_PATH: "tests/pr_comment_stuffed.json"
-          GITHUB_REPOSITORY: "machine-learning-apps/actions-ml-cicd"
       
 
       # - name: test

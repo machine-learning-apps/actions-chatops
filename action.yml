@@ -19,10 +19,6 @@ inputs:
     description: An alternate place to fetch the payload for testing and debugging when making changes to this Action.  This is set to they system environment variable $GITHUB_EVENT_PATH by default.
     require: false
     default: ""
-  BOOL_DISABLE_INDICATOR_LABEL:
-    description: boolean value of "true" or "false".  If true, this overrides the argument INDICATOR_LABEL and the label will not be applied to the PR.
-    require: false
-    default: "false"
 outputs:
   TRAILING_LINE:
     description: the text that immediately follows the triggering phrase that is on the same line.  For example,  "/trigger-phrase foo bar\n next line" will emit the value "foo bar" This is intended to be used as arguments for downstream actions.
