@@ -131,14 +131,14 @@ if __name__ == "__main__":
     # For Output Variable BOOL_TRIGGERED
     triggered = False
     if 'pull_request' in issue_data and trigger_phrase in comment_data['body']:
+        triggered = True
         if trigger_label:
             issue_handle = get_issue_handle(owner=owner, repo=repo, pem=pem, app_id=app_id, issue_number=issue_number)
             result = issue_handle.add_labels(trigger_label)
             labels = [x.name for x in result]
             assert result and trigger_label in labels, "issue annotation on PR not successfull."
             print(f'Successfully added label {trigger_label} to {issue_handle.state} PR: {issue_handle.html_url}')
-            triggered = True
-        
+            
         # emit output variablesOne w
         trailing_text = comment_data['body'].split(trigger_phrase)[-1]
         trailing_line = trailing_text.splitlines()[0].strip() if trailing_text.splitlines() else ''
