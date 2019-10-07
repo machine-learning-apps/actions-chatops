@@ -3,10 +3,9 @@ name: Tests
 on: [push]
 
 jobs:
-  test-static-payload:
+  build-temp-container:
     runs-on: ubuntu-latest
     steps:
-  
       - uses: actions/checkout@master
       
       - name: build-temp-container
@@ -18,6 +17,13 @@ jobs:
           USERNAME: ${{ secrets.DOCKER_USERNAME }}
           PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
 
+  test-static-payload:
+    needs: [build-temp-container]
+    runs-on: ubuntu-latest
+    steps:
+  
+      - uses: actions/checkout@master
+      
       - name: test
         uses: docker://hamelsmu/chatops-workaround:temp
         env:
