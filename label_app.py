@@ -141,8 +141,8 @@ if __name__ == "__main__":
         
         # emit output variablesOne w
         trailing_text = comment_data['body'].split(trigger_phrase)[-1]
-        trailing_line = trailing_text.splitlines()[0].strip()
-        trailing_token = trailing_line.split()[0]
+        trailing_line = trailing_text.splitlines()[0].strip() if trailing_text.splitlines() else ''
+        trailing_token = trailing_line.split()[0] if trailing_line.split() else ''
         print(f"::set-output name=TRAILING_LINE::{trailing_line}")
         print(f"::set-output name=TRAILING_TOKEN::{trailing_token}")
         print(f"::set-output name=PULL_REQUEST_NUMBER::{issue_number}")
