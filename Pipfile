@@ -12,6 +12,8 @@ jwt = "*"
 requests = "*"
 ipykernel = "*"
 jupyter = "*"
+pyjwt = "*"
+ipdb = "*"
 
 [requires]
 python_version = "3.7"

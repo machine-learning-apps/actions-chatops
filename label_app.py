@@ -7,6 +7,7 @@ import os
 import jwt
 import requests
 
+
 def get_issue_handle(owner, repo, pem, app_id, issue_number):
     "Returns handle for the issue (which is also the PR)"
     with open('app.pem', 'w') as f:
@@ -114,9 +115,8 @@ if __name__ == "__main__":
     assert pem, "Error: must supply input APP_PEM"
     assert app_id, "Error: must supply input APP_ID"
     assert trigger_phrase, "Error: must supply input TRIGGER_PHRASE"
-    assert trigger_label, "Error: must supply input INDICATOR_LABEL"
     assert payload_fname or test_payload_fname, "Error: System environment variable GITHUB_EVENT_PATH or TEST_EVENT_PATH not found"
-
+    
     fname = payload_fname if not test_payload_fname else test_payload_fname
     owner, repo = os.getenv('GITHUB_REPOSITORY').split('/')
     
@@ -129,9 +129,23 @@ if __name__ == "__main__":
     
     assert 'issue' in payload and 'comment' in payload, 'Error: this action is designed to operate on the event issue_comment only.'
 
+    # For Output Variable BOOL_TRIGGERED
+    triggered = False
     if 'pull_request' in issue_data and trigger_phrase in comment_data['body']:
-        issue_handle = get_issue_handle(owner=owner, repo=repo, pem=pem, app_id=app_id, issue_number=issue_number)
-        result = issue_handle.add_labels(trigger_label)
-        labels = [x.name for x in result]
-        assert result and trigger_label in labels, "issue annotation on PR not successfull."
-        print(f'Successfully added label {trigger_label} to {issue_handle.state} PR: {issue_handle.html_url}')
+        if trigger_label:
+            issue_handle = get_issue_handle(owner=owner, repo=repo, pem=pem, app_id=app_id, issue_number=issue_number)
+            result = issue_handle.add_labels(trigger_label)
+            labels = [x.name for x in result]
+            assert result and trigger_label in labels, "issue annotation on PR not successfull."
+            print(f'Successfully added label {trigger_label} to {issue_handle.state} PR: {issue_handle.html_url}')
+            triggered = True
+        
+        # emit output variablesOne w
+        trailing_text = comment_data['body'].split(trigger_phrase)[-1]
+        trailing_line = trailing_text.splitlines()[0].strip()
+        trailing_token = trailing_line.split()[0]
+        print(f"::set-output name=TRAILING_LINE::{trailing_line}")
+        print(f"::set-output name=TRAILING_TOKEN::{trailing_token}")
+        print(f"::set-output name=PULL_REQUEST_NUMBER::{issue_number}")
+    
+    print(f"::set-output name=BOOL_TRIGGERED::{triggered}")

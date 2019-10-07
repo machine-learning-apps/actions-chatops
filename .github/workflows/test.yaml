@@ -16,6 +16,29 @@ jobs:
           INDICATOR_LABEL: "test-label"
           TEST_EVENT_PATH: "tests/pr_comment_payload.json"
 
+      - name: emit-output
+        uses: ./
+        id: nolabel
+        with:
+          APP_PEM: ${{ secrets.APP_PEM }}
+          APP_ID: ${{ secrets.APP_ID }}
+          TRIGGER_PHRASE: "/full-test-run"
+          TEST_EVENT_PATH: "tests/pr_comment_stuffed.json"
+
+      - name: test-output
+        run: |
+          import os
+          assert os.getenv('TRAILING_LINE') == "foo bar"
+          assert os.getenv('TRAILING_TOKEN') == "foo"
+          assert os.getenv('PULL_REQUEST_NUMBER') == '26'
+          assert os.getenv('BOOL_TRIGGERED') == 'True'
+        shell: python
+        env:
+          TRAILING_LINE: ${{ steps.nolabel.outputs.TRAILING_LINE }}
+          TRAILING_TOKEN: ${{ steps.nolabel.outputs.TRAILING_TOKEN }}
+          PULL_REQUEST_NUMBER: ${{ steps.nolabel.outputs.PULL_REQUEST_NUMBER }}
+          BOOL_TRIGGERED: ${{ steps.nolabel.outputs.BOOL_TRIGGERED }}
+
       - name: pre-build action image
         run: |
           cd $GITHUB_WORKSPACE
