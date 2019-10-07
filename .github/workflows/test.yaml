@@ -7,8 +7,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
+      
+      - name: build-temp-container
+        run: |
+          docker build -t hamelsmu/chatops-workaround:temp -f prebuild.Dockerfile .
+
       - name: test
-        uses: ./
+        run: |
+          docker run hamelsmu/chatops-workaround:temp
         with:
           APP_PEM: ${{ secrets.APP_PEM }}
           APP_ID: ${{ secrets.APP_ID }}
@@ -17,13 +23,33 @@ jobs:
           TEST_EVENT_PATH: "tests/pr_comment_payload.json"
 
       - name: emit-output
-        uses: ./
+        run: |
+          docker run hamelsmu/chatops-workaround:temp
         id: nolabel
         with:
           APP_PEM: ${{ secrets.APP_PEM }}
           APP_ID: ${{ secrets.APP_ID }}
           TRIGGER_PHRASE: "/full-test-run"
           TEST_EVENT_PATH: "tests/pr_comment_stuffed.json"
+      
+
+      # - name: test
+      #   uses: ./
+      #   with:
+      #     APP_PEM: ${{ secrets.APP_PEM }}
+      #     APP_ID: ${{ secrets.APP_ID }}
+      #     TRIGGER_PHRASE: "/test-trigger-comment"
+      #     INDICATOR_LABEL: "test-label"
+      #     TEST_EVENT_PATH: "tests/pr_comment_payload.json"
+
+      # - name: emit-output
+      #   uses: ./
+      #   id: nolabel
+      #   with:
+      #     APP_PEM: ${{ secrets.APP_PEM }}
+      #     APP_ID: ${{ secrets.APP_ID }}
+      #     TRIGGER_PHRASE: "/full-test-run"
+      #     TEST_EVENT_PATH: "tests/pr_comment_stuffed.json"
 
       - name: test-output
         run: |
