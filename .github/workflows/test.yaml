@@ -16,22 +16,22 @@ jobs:
       - name: test
         run: |
           docker run hamelsmu/chatops-workaround:temp
-        with:
-          APP_PEM: ${{ secrets.APP_PEM }}
-          APP_ID: ${{ secrets.APP_ID }}
-          TRIGGER_PHRASE: "/test-trigger-comment"
-          INDICATOR_LABEL: "test-label"
-          TEST_EVENT_PATH: "tests/pr_comment_payload.json"
+        env:
+          INPUT_APP_PEM: ${{ secrets.APP_PEM }}
+          INPUT_APP_ID: ${{ secrets.APP_ID }}
+          INPUT_TRIGGER_PHRASE: "/test-trigger-comment"
+          INPUT_INDICATOR_LABEL: "test-label"
+          INPUT_TEST_EVENT_PATH: "tests/pr_comment_payload.json"
 
       - name: emit-output
         run: |
           docker run hamelsmu/chatops-workaround:temp
         id: nolabel
-        with:
-          APP_PEM: ${{ secrets.APP_PEM }}
-          APP_ID: ${{ secrets.APP_ID }}
-          TRIGGER_PHRASE: "/full-test-run"
-          TEST_EVENT_PATH: "tests/pr_comment_stuffed.json"
+        env:
+          INPUT_APP_PEM: ${{ secrets.APP_PEM }}
+          INPUT_APP_ID: ${{ secrets.APP_ID }}
+          INPUT_TRIGGER_PHRASE: "/full-test-run"
+          INPUT_TEST_EVENT_PATH: "tests/pr_comment_stuffed.json"
       
 
       # - name: test
