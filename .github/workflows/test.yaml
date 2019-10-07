@@ -85,7 +85,7 @@ jobs:
           USERNAME: ${{ secrets.DOCKER_USERNAME }}
           PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: test
+      - name: final-test
         uses: ./
         with:
           APP_PEM: ${{ secrets.APP_PEM }}
