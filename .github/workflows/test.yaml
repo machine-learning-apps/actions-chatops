@@ -32,6 +32,7 @@ jobs:
           INPUT_TRIGGER_PHRASE: "/test-trigger-comment"
           INPUT_INDICATOR_LABEL: "test-label"
           INPUT_TEST_EVENT_PATH: "tests/pr_comment_payload.json"
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: emit-output
         uses: docker://hamelsmu/chatops-workaround:temp
@@ -41,6 +42,7 @@ jobs:
           INPUT_APP_ID: ${{ secrets.APP_ID }}
           INPUT_TRIGGER_PHRASE: "/full-test-run"
           INPUT_TEST_EVENT_PATH: "tests/pr_comment_stuffed.json"
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: emit-output2
         uses: docker://hamelsmu/chatops-workaround:temp
@@ -50,6 +52,7 @@ jobs:
           INPUT_APP_ID: ${{ secrets.APP_ID }}
           INPUT_TRIGGER_PHRASE: "/something-random-no-trigger"
           INPUT_TEST_EVENT_PATH: "tests/pr_comment_stuffed.json"
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: test-output
         run: |
@@ -85,3 +88,4 @@ jobs:
           TRIGGER_PHRASE: "/test-trigger-comment"
           INDICATOR_LABEL: "test-label"
           TEST_EVENT_PATH: "tests/pr_comment_payload.json"
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
