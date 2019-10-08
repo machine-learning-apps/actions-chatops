@@ -122,7 +122,6 @@ if __name__ == "__main__":
     if trigger_label and not (pem and app_id):
         raise EnvironmentError("If you supply a value for INDICATOR_LABEL you must also provide APP_PEM and APP_ID to authenticate as a GitHub App.")
     assert github_token, "Error: system environment variable GITHUB_TOKEN must be provided."
-    assert app_id, "Error: must supply input APP_ID"
     assert trigger_phrase, "Error: must supply input TRIGGER_PHRASE"
     assert payload_fname or test_payload_fname, "Error: System environment variable GITHUB_EVENT_PATH or TEST_EVENT_PATH not found"
     
