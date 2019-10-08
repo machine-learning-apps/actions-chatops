@@ -121,6 +121,7 @@ if __name__ == "__main__":
 
     if trigger_label and not (pem and app_id):
         raise EnvironmentError("If you supply a value for INDICATOR_LABEL you must also provide APP_PEM and APP_ID to authenticate as a GitHub App.")
+ 
     assert github_token, "Error: system environment variable GITHUB_TOKEN must be provided."
     assert trigger_phrase, "Error: must supply input TRIGGER_PHRASE"
     assert payload_fname or test_payload_fname, "Error: System environment variable GITHUB_EVENT_PATH or TEST_EVENT_PATH not found"
@@ -130,6 +131,16 @@ if __name__ == "__main__":
     
     with open(fname, 'r') as f:
         payload = json.load(f)
+
+    if pem and app_id:
+        with open('temp_pem_file.txt', 'w') as f:
+            f.write(pem)
+        app = GitHubApp(pem_path='temp_pem_file.txt', app_id=app_id)
+        installation_id = app.get_installation_id(owner=owner, repo=repo)
+        app_token = app.get_installation_access_token(installation_id=installation_id)
+        assert app_token, "Was not able to retrieve token for the App Installation"
+        print(f"::add-mask::{app_token}")
+        print(f"::set-output name=APP_TOKEN::{app_token}")
 
     issue_data = payload['issue']
     issue_number = issue_data['number']
