@@ -1,6 +1,6 @@
 ![Actions Status](https://github.com/machine-learning-apps/actions-chatops/workflows/Tests/badge.svg)
 
-# Trigger Actions With ChatOps via PR Labels or Deployements
+# Trigger Actions With ChatOps on Pull Requests
 
 
 This action helps you trigger downstream actions with a custom command made via a comment in a pull request, otherwhise known as [ChatOps](https://www.pagerduty.com/blog/what-is-chatops/).  
