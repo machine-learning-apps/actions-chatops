@@ -57,10 +57,13 @@ jobs:
       - name: test-output
         run: |
           import os
-          assert os.getenv('TRAILING_LINE') == "foo bar"
+          assert os.getenv('TRAILING_LINE') == "foo bar hello"
           assert os.getenv('TRAILING_TOKEN') == "foo"
           assert os.getenv('PULL_REQUEST_NUMBER') == '3'
           assert os.getenv('BOOL_TRIGGERED') == 'True'
+          assert os.getenv('COMMENTER_USERNAME') == "hamelsmu"
+          assert os.getenv('BRANCH_NAME') == "deploy-functionality"
+          assert os.getenv('SHA') == "df0f231c545d1b6298b3a7d6dcb5ea344b36ed48"
           assert os.getenv('BOOL_TRIGGERED_2') == 'False'
         shell: python
         env:
@@ -68,6 +71,9 @@ jobs:
           TRAILING_TOKEN: ${{ steps.nolabel.outputs.TRAILING_TOKEN }}
           PULL_REQUEST_NUMBER: ${{ steps.nolabel.outputs.PULL_REQUEST_NUMBER }}
           BOOL_TRIGGERED: ${{ steps.nolabel.outputs.BOOL_TRIGGERED }}
+          COMMENTER_USERNAME: ${{ steps.nolabel.outputs.COMMENTER_USERNAME }}
+          BRANCH_NAME: ${{ steps.nolabel.outputs.BRANCH_NAME }}
+          SHA: ${{ steps.nolabel.outputs.SHA }}
           BOOL_TRIGGERED_2: ${{ steps.nolabel2.outputs.BOOL_TRIGGERED }}
 
       - name: pre-build action image
