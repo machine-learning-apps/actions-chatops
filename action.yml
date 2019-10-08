@@ -34,6 +34,8 @@ outputs:
     description: The name of the branch corresponding to the PR.
   SHA:
     description: The SHA of the branch on the PR at the time the triggering comment was made.
+  APP_INSTALLATION_TOKEN:
+    description: The installation access token for the GitHub App corresponding to and the current repository.  This is only retrieved if the `APP_PEM` and `APP_ID` inputs are supplied.
 branding:
   color: 'gray-dark'
   icon: 'message-square'
