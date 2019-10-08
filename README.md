@@ -5,7 +5,7 @@
 
 This action helps you trigger downstream actions with a custom command made via a comment in a pull request, otherwhise known as [ChatOps](https://www.pagerduty.com/blog/what-is-chatops/).  
 
-Optionally, you may provide credentials to authenticate as a GitHub App and label an issue once a trigger phrase is detected.  Having another app other than GitHub Actions apply a label allows you to create a label event to trigger downstream Actions (since Actions cannot create events that trigger other Actions).
+Optionally, you may provide credentials to authenticate as a GitHub App and label an issue once a trigger phrase is detected.  Having another app other than the GitHub Action apply a label allows you to create a label event to trigger downstream Actions (since an Action cannot create events that trigger other Actions).
 
 
 ## Example Usage
@@ -18,14 +18,31 @@ jobs:
   label-pr:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@master
-      - name: test
+      - name: listen for PR Comments
         uses: machine-learning-apps/actions-chatops-workaround@master
         with:
           APP_PEM: ${{ secrets.APP_PEM }}
           APP_ID: ${{ secrets.APP_ID }}
           TRIGGER_PHRASE: "/test-trigger-comment"
           INDICATOR_LABEL: "test-label"
+        env: # you must supply GITHUB_TOKEN
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+        # This step clones the branch of the PR associated with the triggering phrase, but only if it is triggered.
+      - name: clone branch of PR
+        if: steps.prcomm.outputs.TRIGGERED == 'true'
+        uses: actions/checkout@master
+        with:
+          ref: ${{ steps.prcomm.outputs.SHA }}
+
+        # This step is a toy example that illustrates how you can use outputs from the pr-command action
+      - name: print variables
+        if: steps.prcomm.outputs.TRIGGERED == 'true'
+        run: echo "${USERNAME} made a triggering comment on PR# ${PR_NUMBER} for ${BRANCH_NAME}"
+        env: 
+          BRANCH_NAME: ${{ steps.prcomm.outputs.BRANCH_NAME }}
+          PR_NUMBER: ${{ steps.prcomm.outputs.PULL_REQUEST_NUMBER }}
+          USERNAME: ${{ steps.prcomm.outputs.COMMENTER_USERNAME }}
 ```
 
 A demonstration of this in action can be found on [this PR](https://github.com/machine-learning-apps/actions-chatops-workaround/pull/2).
@@ -70,4 +87,3 @@ A demonstration of this in action can be found on [this PR](https://github.com/m
  - `SHA`: The SHA of the branch on the PR at the time the triggering comment was made.
 
  - `BOOL_TRIGGERED`: true or false depending on if the trigger phrase was detected and this is a pull request.
- 
