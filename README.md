@@ -1,17 +1,11 @@
-![Actions Status](https://github.com/machine-learning-apps/actions-chatops-workaround/workflows/Tests/badge.svg)
+![Actions Status](https://github.com/machine-learning-apps/actions-chatops/workflows/Tests/badge.svg)
 
 # Trigger Actions With ChatOps via PR Labels or Deployements
 
-This action helps you trigger downstream actions with a custom command made via a comment in a pull request, otherwhise known as [ChatOps](https://www.pagerduty.com/blog/what-is-chatops/). This Action is similar to [this chatops action](https://github.com/machine-learning-apps/actions-chatops), except that this Action can defer to GitHub App to (1) Make labels on a PR or (2) Create a [Deployment](https://developer.github.com/v3/repos/deployments/#create-a-deployment).  The reasons you might want to do this are the following:  
 
-- By deferring to a GitHub App to create a pull request label or a deployment event, you can trigger a downstream GitHub Action that runs in the context of a pull request.  The reason for using a GitHub App is Actions cannot trigger other Actions.  
-- It can be important to run in the context of a pull request as that is the only way you will see [Check Runs](https://developer.github.com/v3/checks/runs/) for your pull request, so you can monitor the status of your workflows.   
-  - Note that comments on PRs [triggers Actions workflows on the default branch](https://help.github.com/en/articles/events-that-trigger-workflows#issue-comment-event-issue_comment) which is not desireable for ChatOps most of the time.  This Action resolves this issue by piggybacking on a GitHub app to create an event that will trigger Actions workflows on the pull request's branch instead.
-- This can prevent you from accidentally executing the chatops command twice as the label event will not fire if the PR is already labeled or the deployment has already been created.
+This action helps you trigger downstream actions with a custom command made via a comment in a pull request, otherwhise known as [ChatOps](https://www.pagerduty.com/blog/what-is-chatops/).  
 
-Therefore, one of the required inputs is the secret key `APP_PEM` for authenticating as a GitHub App which has the following permissions:
-- [Deployment](https://developer.github.com/v3/apps/permissions/#permission-on-deployments): read & write
-- [Pull Requests](https://developer.github.com/v3/apps/permissions/#permission-on-pull-requests): read & write
+Optionally, you may provide credentials to authenticate as a GitHub App and label an issue once a trigger phrase is detected.  Having another app other than the GitHub Action apply a label allows you to create a label event to trigger downstream Actions (since an Action cannot create events that trigger other Actions).
 
 
 ## Example Usage
@@ -24,17 +18,34 @@ jobs:
   label-pr:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@master
-      - name: test
-        uses: machine-learning-apps/actions-chatops-workaround@master
+      - name: listen for PR Comments
+        uses: machine-learning-apps/actions-chatops@master
         with:
           APP_PEM: ${{ secrets.APP_PEM }}
           APP_ID: ${{ secrets.APP_ID }}
           TRIGGER_PHRASE: "/test-trigger-comment"
           INDICATOR_LABEL: "test-label"
+        env: # you must supply GITHUB_TOKEN
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+        # This step clones the branch of the PR associated with the triggering phrase, but only if it is triggered.
+      - name: clone branch of PR
+        if: steps.prcomm.outputs.TRIGGERED == 'true'
+        uses: actions/checkout@master
+        with:
+          ref: ${{ steps.prcomm.outputs.SHA }}
+
+        # This step is a toy example that illustrates how you can use outputs from the pr-command action
+      - name: print variables
+        if: steps.prcomm.outputs.TRIGGERED == 'true'
+        run: echo "${USERNAME} made a triggering comment on PR# ${PR_NUMBER} for ${BRANCH_NAME}"
+        env: 
+          BRANCH_NAME: ${{ steps.prcomm.outputs.BRANCH_NAME }}
+          PR_NUMBER: ${{ steps.prcomm.outputs.PULL_REQUEST_NUMBER }}
+          USERNAME: ${{ steps.prcomm.outputs.COMMENTER_USERNAME }}
 ```
 
-A demonstration of this in action can be found on [this PR](https://github.com/machine-learning-apps/actions-chatops-workaround/pull/2).
+A demonstration of this in action can be found on [this PR](https://github.com/machine-learning-apps/actions-chatops/pull/2).
 
 ## Mandatory Inputs
 
@@ -52,9 +63,27 @@ A demonstration of this in action can be found on [this PR](https://github.com/m
 
   - `INDICATOR_LABEL`:
     - description: label that wil be added to the PR if a triggering comment is detected.  This is used to trigger downstream Actions with the right context of the PR.
-    - required: true
+    - required: false
+    - default: ""
 
   - `TEST_EVENT_PATH`:
     - description: An alternate place to fetch the payload for testing and debugging when making changes to this Action.  This is set to they system environment variable $GITHUB_EVENT_PATH by default.
     - require: false
-    default: ""
+    - default: ""
+
+
+## Outputs
+
+ - `TRAILING_LINE:`: the text that immediately follows the triggering phrase that is on the same line.  For example,  "/trigger-phrase foo bar\n next line" will emit the value "foo bar" This is intended to be used as arguments for downstream actions.
+
+ - `TRAILING_TOKEN:`: this is the next token that immediately follows the triggering phrase that is on the same line.  For example,  "/trigger-phrase foo bar" will emit the value "foo". This is intended to be used as arguments for downstream actions.
+
+ - `PULL_REQUEST_NUMBER`: the number of the pull request
+
+ - `COMMENTER_USERNAME`: The GitHub username of the person that made the triggering comment in the PR.
+
+ - `BRANCH_NAME`: The name of the branch corresponding to the PR.
+
+ - `SHA`: The SHA of the branch on the PR at the time the triggering comment was made.
+
+ - `BOOL_TRIGGERED`: true or false depending on if the trigger phrase was detected and this is a pull request.

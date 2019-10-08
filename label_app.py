@@ -7,6 +7,7 @@ import os
 import jwt
 import requests
 
+
 def get_issue_handle(owner, repo, pem, app_id, issue_number):
     "Returns handle for the issue (which is also the PR)"
     with open('app.pem', 'w') as f:
@@ -16,7 +17,14 @@ def get_issue_handle(owner, repo, pem, app_id, issue_number):
     client = app.get_installation(i_id)
     issue_handle = client.issue(username=owner, repository=repo, number=issue_number)
     return issue_handle
-    
+
+def get_pr_metadata(owner, repo, pr_number, token):
+    "fetch information about the pr"
+    url = f"https://api.github.com/repos/{owner}/{repo}/pulls/{pr_number}"
+    headers = {"Accept": "application/vnd.github.v3+json",
+               "Authorization": f"token {token}"}
+    response = requests.get(url, headers=headers)
+    return response
 
 class GitHubApp(GitHub):
     """
@@ -109,14 +117,15 @@ if __name__ == "__main__":
     trigger_label = os.getenv('INPUT_INDICATOR_LABEL')
     payload_fname = os.getenv('GITHUB_EVENT_PATH')
     test_payload_fname = os.getenv('INPUT_TEST_EVENT_PATH')
-    owner, repo = os.getenv('GITHUB_REPOSITORY').split('/')
+    github_token = os.getenv('GITHUB_TOKEN')
 
-    assert pem, "Error: must supply input APP_PEM"
+    if trigger_label and not pem:
+        raise EnvironmentError("If you supply a value for INDICATOR_LABEL you must also provide APP_PEM to authenticate as a GitHub App.")
+    assert github_token, "Error: system environment variable GITHUB_TOKEN must be provided."
     assert app_id, "Error: must supply input APP_ID"
     assert trigger_phrase, "Error: must supply input TRIGGER_PHRASE"
-    assert trigger_label, "Error: must supply input INDICATOR_LABEL"
     assert payload_fname or test_payload_fname, "Error: System environment variable GITHUB_EVENT_PATH or TEST_EVENT_PATH not found"
-
+    
     fname = payload_fname if not test_payload_fname else test_payload_fname
     owner, repo = os.getenv('GITHUB_REPOSITORY').split('/')
     
@@ -126,12 +135,36 @@ if __name__ == "__main__":
     issue_data = payload['issue']
     issue_number = issue_data['number']
     comment_data = payload['comment']
+    username = comment_data['user']['login']
     
     assert 'issue' in payload and 'comment' in payload, 'Error: this action is designed to operate on the event issue_comment only.'
 
+    # For Output Variable BOOL_TRIGGERED
+    triggered = False
     if 'pull_request' in issue_data and trigger_phrase in comment_data['body']:
-        issue_handle = get_issue_handle(owner=owner, repo=repo, pem=pem, app_id=app_id, issue_number=issue_number)
-        result = issue_handle.add_labels(trigger_label)
-        labels = [x.name for x in result]
-        assert result and trigger_label in labels, "issue annotation on PR not successfull."
-        print(f'Successfully added label {trigger_label} to {issue_handle.state} PR: {issue_handle.html_url}')
+        triggered = True
+
+        response = get_pr_metadata(owner=owner, repo=repo, pr_number=issue_number, token=github_token)
+        assert response, f"Error: unable to retrieve PR metadata: {response.status_code}"
+        head_branch = response.json()['head']['ref']
+        head_sha = response.json()['head']['sha']
+
+        if trigger_label and pem:
+            issue_handle = get_issue_handle(owner=owner, repo=repo, pem=pem, app_id=app_id, issue_number=issue_number)
+            result = issue_handle.add_labels(trigger_label)
+            labels = [x.name for x in result]
+            assert result and trigger_label in labels, "issue annotation on PR not successfull."
+            print(f'Successfully added label {trigger_label} to {issue_handle.state} PR: {issue_handle.html_url}')
+            
+        # emit output variablesOne w
+        trailing_text = comment_data['body'].split(trigger_phrase)[-1]
+        trailing_line = trailing_text.splitlines()[0].strip() if trailing_text.splitlines() else ''
+        trailing_token = trailing_line.split()[0] if trailing_line.split() else ''
+        print(f"::set-output name=TRAILING_LINE::{trailing_line}")
+        print(f"::set-output name=TRAILING_TOKEN::{trailing_token}")
+        print(f"::set-output name=PULL_REQUEST_NUMBER::{issue_number}")
+        print(f"::set-output name=COMMENTER_USERNAME::{username}")
+        print(f"::set-output name=BRANCH_NAME::{head_branch}")
+        print(f"::set-output name=SHA::{head_sha}")
+    
+    print(f"::set-output name=BOOL_TRIGGERED::{triggered}")

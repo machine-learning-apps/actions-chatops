@@ -3,23 +3,88 @@ name: Tests
 on: [push]
 
 jobs:
-  test-static-payload:
+  build-temp-container:
     runs-on: ubuntu-latest
     steps:
-  
       - uses: actions/checkout@master
-        
-      - name: pre-build action image
+      
+      - name: build-temp-container
         run: |
-          cd $GITHUB_WORKSPACE
           echo ${PASSWORD} | docker login -u $USERNAME --password-stdin
-          docker build -t hamelsmu/chatops-workaround -f prebuild.Dockerfile .
-          docker push hamelsmu/chatops-workaround 
+          docker build -t hamelsmu/chatops:temp -f prebuild.Dockerfile .
+          docker push hamelsmu/chatops:temp
         env:
           USERNAME: ${{ secrets.DOCKER_USERNAME }}
           PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
 
+  test-static-payload:
+    needs: [build-temp-container]
+    runs-on: ubuntu-latest
+    steps:
+  
+      - uses: actions/checkout@master
+      
       - name: test
+        uses: docker://hamelsmu/chatops:temp
+        env:
+          INPUT_APP_PEM: ${{ secrets.APP_PEM }}
+          INPUT_APP_ID: ${{ secrets.APP_ID }}
+          INPUT_TRIGGER_PHRASE: "/test-trigger-comment"
+          INPUT_INDICATOR_LABEL: "test-label"
+          INPUT_TEST_EVENT_PATH: "tests/pr_comment_payload.json"
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: emit-output
+        uses: docker://hamelsmu/chatops:temp
+        id: nolabel
+        env:
+          INPUT_APP_PEM: ${{ secrets.APP_PEM }}
+          INPUT_APP_ID: ${{ secrets.APP_ID }}
+          INPUT_TRIGGER_PHRASE: "/full-test-run"
+          INPUT_TEST_EVENT_PATH: "tests/pr_comment_stuffed.json"
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: emit-output2
+        uses: docker://hamelsmu/chatops:temp
+        id: nolabel2
+        env:
+          INPUT_APP_PEM: ${{ secrets.APP_PEM }}
+          INPUT_APP_ID: ${{ secrets.APP_ID }}
+          INPUT_TRIGGER_PHRASE: "/something-random-no-trigger"
+          INPUT_TEST_EVENT_PATH: "tests/pr_comment_stuffed.json"
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: test-output
+        run: |
+          import os
+          assert os.getenv('TRAILING_LINE') == "foo bar hello"
+          assert os.getenv('TRAILING_TOKEN') == "foo"
+          assert os.getenv('PULL_REQUEST_NUMBER') == '3'
+          assert os.getenv('BOOL_TRIGGERED') == 'True'
+          assert os.getenv('COMMENTER_USERNAME') == "hamelsmu"
+          assert os.getenv('BRANCH_NAME') == "deploy-functionality"
+          assert os.getenv('BOOL_TRIGGERED_2') == 'False'
+        shell: python
+        env:
+          TRAILING_LINE: ${{ steps.nolabel.outputs.TRAILING_LINE }}
+          TRAILING_TOKEN: ${{ steps.nolabel.outputs.TRAILING_TOKEN }}
+          PULL_REQUEST_NUMBER: ${{ steps.nolabel.outputs.PULL_REQUEST_NUMBER }}
+          BOOL_TRIGGERED: ${{ steps.nolabel.outputs.BOOL_TRIGGERED }}
+          COMMENTER_USERNAME: ${{ steps.nolabel.outputs.COMMENTER_USERNAME }}
+          BRANCH_NAME: ${{ steps.nolabel.outputs.BRANCH_NAME }}
+          BOOL_TRIGGERED_2: ${{ steps.nolabel2.outputs.BOOL_TRIGGERED }}
+
+      - name: pre-build action image
+        run: |
+          cd $GITHUB_WORKSPACE
+          echo ${PASSWORD} | docker login -u $USERNAME --password-stdin
+          docker build -t hamelsmu/chatops -f prebuild.Dockerfile .
+          docker push hamelsmu/chatops 
+        env:
+          USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: final-test
         uses: ./
         with:
           APP_PEM: ${{ secrets.APP_PEM }}
@@ -27,3 +92,5 @@ jobs:
           TRIGGER_PHRASE: "/test-trigger-comment"
           INDICATOR_LABEL: "test-label"
           TEST_EVENT_PATH: "tests/pr_comment_payload.json"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
