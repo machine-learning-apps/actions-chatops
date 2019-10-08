@@ -7,7 +7,7 @@ inputs:
     required: false
   APP_ID:
     description: you GITHUB App ID.
-    required: true
+    required: false
   TRIGGER_PHRASE:
     description: this is the phrase in a PR comment that you want to trigger downstream Actions.  Example - "/deploy-app-test"
     required: true
