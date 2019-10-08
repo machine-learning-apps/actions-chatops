@@ -11,8 +11,8 @@ jobs:
       - name: build-temp-container
         run: |
           echo ${PASSWORD} | docker login -u $USERNAME --password-stdin
-          docker build -t hamelsmu/chatops-workaround:temp -f prebuild.Dockerfile .
-          docker push hamelsmu/chatops-workaround:temp
+          docker build -t hamelsmu/chatops:temp -f prebuild.Dockerfile .
+          docker push hamelsmu/chatops:temp
         env:
           USERNAME: ${{ secrets.DOCKER_USERNAME }}
           PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
@@ -25,7 +25,7 @@ jobs:
       - uses: actions/checkout@master
       
       - name: test
-        uses: docker://hamelsmu/chatops-workaround:temp
+        uses: docker://hamelsmu/chatops:temp
         env:
           INPUT_APP_PEM: ${{ secrets.APP_PEM }}
           INPUT_APP_ID: ${{ secrets.APP_ID }}
@@ -35,7 +35,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: emit-output
-        uses: docker://hamelsmu/chatops-workaround:temp
+        uses: docker://hamelsmu/chatops:temp
         id: nolabel
         env:
           INPUT_APP_PEM: ${{ secrets.APP_PEM }}
@@ -45,7 +45,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: emit-output2
-        uses: docker://hamelsmu/chatops-workaround:temp
+        uses: docker://hamelsmu/chatops:temp
         id: nolabel2
         env:
           INPUT_APP_PEM: ${{ secrets.APP_PEM }}
@@ -63,7 +63,7 @@ jobs:
           assert os.getenv('BOOL_TRIGGERED') == 'True'
           assert os.getenv('COMMENTER_USERNAME') == "hamelsmu"
           assert os.getenv('BRANCH_NAME') == "deploy-functionality"
-          assert os.getenv('SHA') == "df0f231c545d1b6298b3a7d6dcb5ea344b36ed48"
+          assert os.getenv('SHA') == "331131ff17a1471d4559bad9a735ac013e9e7f56"
           assert os.getenv('BOOL_TRIGGERED_2') == 'False'
         shell: python
         env:
@@ -80,8 +80,8 @@ jobs:
         run: |
           cd $GITHUB_WORKSPACE
           echo ${PASSWORD} | docker login -u $USERNAME --password-stdin
-          docker build -t hamelsmu/chatops-workaround -f prebuild.Dockerfile .
-          docker push hamelsmu/chatops-workaround 
+          docker build -t hamelsmu/chatops -f prebuild.Dockerfile .
+          docker push hamelsmu/chatops 
         env:
           USERNAME: ${{ secrets.DOCKER_USERNAME }}
           PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
