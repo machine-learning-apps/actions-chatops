@@ -63,7 +63,6 @@ jobs:
           assert os.getenv('BOOL_TRIGGERED') == 'True'
           assert os.getenv('COMMENTER_USERNAME') == "hamelsmu"
           assert os.getenv('BRANCH_NAME') == "deploy-functionality"
-          assert os.getenv('SHA') == "39c534991f6315aa7d2ac1f8c3726456ec7f0428"
           assert os.getenv('BOOL_TRIGGERED_2') == 'False'
         shell: python
         env:
@@ -73,7 +72,6 @@ jobs:
           BOOL_TRIGGERED: ${{ steps.nolabel.outputs.BOOL_TRIGGERED }}
           COMMENTER_USERNAME: ${{ steps.nolabel.outputs.COMMENTER_USERNAME }}
           BRANCH_NAME: ${{ steps.nolabel.outputs.BRANCH_NAME }}
-          SHA: ${{ steps.nolabel.outputs.SHA }}
           BOOL_TRIGGERED_2: ${{ steps.nolabel2.outputs.BOOL_TRIGGERED }}
 
       - name: pre-build action image
