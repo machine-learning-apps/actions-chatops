@@ -1,4 +1,4 @@
-![Actions Status](https://github.com/machine-learning-apps/actions-chatops-workaround/workflows/Tests/badge.svg)
+![Actions Status](https://github.com/machine-learning-apps/actions-chatops/workflows/Tests/badge.svg)
 
 # Trigger Actions With ChatOps via PR Labels or Deployements
 
@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: listen for PR Comments
-        uses: machine-learning-apps/actions-chatops-workaround@master
+        uses: machine-learning-apps/actions-chatops@master
         with:
           APP_PEM: ${{ secrets.APP_PEM }}
           APP_ID: ${{ secrets.APP_ID }}
@@ -45,7 +45,7 @@ jobs:
           USERNAME: ${{ steps.prcomm.outputs.COMMENTER_USERNAME }}
 ```
 
-A demonstration of this in action can be found on [this PR](https://github.com/machine-learning-apps/actions-chatops-workaround/pull/2).
+A demonstration of this in action can be found on [this PR](https://github.com/machine-learning-apps/actions-chatops/pull/2).
 
 ## Mandatory Inputs
 

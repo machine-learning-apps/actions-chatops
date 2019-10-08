@@ -63,7 +63,7 @@ jobs:
           assert os.getenv('BOOL_TRIGGERED') == 'True'
           assert os.getenv('COMMENTER_USERNAME') == "hamelsmu"
           assert os.getenv('BRANCH_NAME') == "deploy-functionality"
-          assert os.getenv('SHA') == "331131ff17a1471d4559bad9a735ac013e9e7f56"
+          assert os.getenv('SHA') == "ff70f7bf5b92a84cd043237178120c6158faa460"
           assert os.getenv('BOOL_TRIGGERED_2') == 'False'
         shell: python
         env:
