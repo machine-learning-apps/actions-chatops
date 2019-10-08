@@ -133,7 +133,7 @@ if __name__ == "__main__":
         payload = json.load(f)
 
     if pem and app_id:
-        with open('temp_pem_file.txt', 'r') as f:
+        with open('temp_pem_file.txt', 'w') as f:
             f.write(pem)
         app = GitHubApp(pem_path='temp_pem_file.txt', app_id=app_id)
         installation_id = app.get_installation_id(owner=owner, repo=repo)
