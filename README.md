@@ -60,7 +60,7 @@ jobs:
 
   - `APP_ID`:your GITHUB App ID. _This is required if the input INDICATOR_LABEL is supplied._
 
-  - `TEST_EVENT_PATH`: An alternate place to fetch the payload for testing and debugging when making changes to this Action.  This is set to they system environment variable $GITHUB_EVENT_PATH by default.
+  - `TEST_EVENT_PATH`: An alternate place to fetch the payload for testing and debugging when making changes to this Action.  This is set to the system environment variable $GITHUB_EVENT_PATH by default.
 
 
 ## Outputs
