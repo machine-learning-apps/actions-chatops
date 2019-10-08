@@ -17,7 +17,14 @@ def get_issue_handle(owner, repo, pem, app_id, issue_number):
     client = app.get_installation(i_id)
     issue_handle = client.issue(username=owner, repository=repo, number=issue_number)
     return issue_handle
-    
+
+def get_pr_metadata(owner, repo, pr_number, token):
+    "fetch information about the pr"
+    url = f"https://api.github.com/repos/{owner}/{repo}/pulls/{pr_number}"
+    headers = {"Accept": "application/vnd.github.v3+json",
+               "Authorization": f"token {token}"}
+    response = requests.get(url, headers=headers)
+    return response
 
 class GitHubApp(GitHub):
     """
@@ -110,8 +117,10 @@ if __name__ == "__main__":
     trigger_label = os.getenv('INPUT_INDICATOR_LABEL')
     payload_fname = os.getenv('GITHUB_EVENT_PATH')
     test_payload_fname = os.getenv('INPUT_TEST_EVENT_PATH')
+    github_token = os.getenv('GITHUB_TOKEN')
 
     assert pem, "Error: must supply input APP_PEM"
+    assert github_token, "Error: environment variable GITHUB_TOKEN must be provided."
     assert app_id, "Error: must supply input APP_ID"
     assert trigger_phrase, "Error: must supply input TRIGGER_PHRASE"
     assert payload_fname or test_payload_fname, "Error: System environment variable GITHUB_EVENT_PATH or TEST_EVENT_PATH not found"
@@ -125,6 +134,7 @@ if __name__ == "__main__":
     issue_data = payload['issue']
     issue_number = issue_data['number']
     comment_data = payload['comment']
+    username = comment_data['user']['login']
     
     assert 'issue' in payload and 'comment' in payload, 'Error: this action is designed to operate on the event issue_comment only.'
 
@@ -132,6 +142,12 @@ if __name__ == "__main__":
     triggered = False
     if 'pull_request' in issue_data and trigger_phrase in comment_data['body']:
         triggered = True
+
+        response = get_pr_metadata(owner=owner, repo=repo, pr_number=issue_number, token=github_token)
+        assert response, f"Error: unable to retrieve PR metadata: {response.status_code}"
+        head_branch = response.json()['head']['ref']
+        head_sha = response.json()['head']['sha']
+
         if trigger_label:
             issue_handle = get_issue_handle(owner=owner, repo=repo, pem=pem, app_id=app_id, issue_number=issue_number)
             result = issue_handle.add_labels(trigger_label)
@@ -146,5 +162,8 @@ if __name__ == "__main__":
         print(f"::set-output name=TRAILING_LINE::{trailing_line}")
         print(f"::set-output name=TRAILING_TOKEN::{trailing_token}")
         print(f"::set-output name=PULL_REQUEST_NUMBER::{issue_number}")
+        print(f"::set-output name=COMMENTER_USERNAME::{username}")
+        print(f"::set-output name=BRANCH_NAME::{head_branch}")
+        print(f"::set-output name=SHA::{head_sha}")
     
     print(f"::set-output name=BOOL_TRIGGERED::{triggered}")
