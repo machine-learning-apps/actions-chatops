@@ -92,4 +92,5 @@ jobs:
           TRIGGER_PHRASE: "/test-trigger-comment"
           INDICATOR_LABEL: "test-label"
           TEST_EVENT_PATH: "tests/pr_comment_payload.json"
+        env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
