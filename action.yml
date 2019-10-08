@@ -4,7 +4,7 @@ author: Hamel Husain
 inputs:
   APP_PEM:
     description: string version of your PEM file used to authenticate as a GitHub App
-    required: true
+    required: false
   APP_ID:
     description: you GITHUB App ID.
     required: true
@@ -28,6 +28,12 @@ outputs:
     description: true or false depending on if the trigger phrase was detected and this is a pull request.
   PULL_REQUEST_NUMBER:
     description: the number of the pull request
+  COMMENTER_USERNAME:
+    description: The GitHub username of the person that made the triggering comment in the PR.
+  BRANCH_NAME:
+    description: The name of the branch corresponding to the PR.
+  SHA:
+    description: The SHA of the branch on the PR at the time the triggering comment was made.
 branding:
   color: 'blue'
   icon: 'message-square'

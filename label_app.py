@@ -119,8 +119,9 @@ if __name__ == "__main__":
     test_payload_fname = os.getenv('INPUT_TEST_EVENT_PATH')
     github_token = os.getenv('GITHUB_TOKEN')
 
-    assert pem, "Error: must supply input APP_PEM"
-    assert github_token, "Error: environment variable GITHUB_TOKEN must be provided."
+    if trigger_label and not pem:
+        raise EnvironmentError("If you supply a value for INDICATOR_LABEL you must also provide APP_PEM to authenticate as a GitHub App.")
+    assert github_token, "Error: system environment variable GITHUB_TOKEN must be provided."
     assert app_id, "Error: must supply input APP_ID"
     assert trigger_phrase, "Error: must supply input TRIGGER_PHRASE"
     assert payload_fname or test_payload_fname, "Error: System environment variable GITHUB_EVENT_PATH or TEST_EVENT_PATH not found"
@@ -148,7 +149,7 @@ if __name__ == "__main__":
         head_branch = response.json()['head']['ref']
         head_sha = response.json()['head']['sha']
 
-        if trigger_label:
+        if trigger_label and pem:
             issue_handle = get_issue_handle(owner=owner, repo=repo, pem=pem, app_id=app_id, issue_number=issue_number)
             result = issue_handle.add_labels(trigger_label)
             labels = [x.name for x in result]
