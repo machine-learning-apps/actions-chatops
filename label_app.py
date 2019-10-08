@@ -115,7 +115,6 @@ if __name__ == "__main__":
     app_id = os.getenv('INPUT_APP_ID')
     trigger_phrase = os.getenv('INPUT_TRIGGER_PHRASE')
     trigger_label = os.getenv('INPUT_INDICATOR_LABEL')
-    bool_deployment = os.getenv('INPUT_BOOL_DEPLOYMENT')
     payload_fname = os.getenv('GITHUB_EVENT_PATH')
     test_payload_fname = os.getenv('INPUT_TEST_EVENT_PATH')
     github_token = os.getenv('GITHUB_TOKEN')
