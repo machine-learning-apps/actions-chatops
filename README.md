@@ -1,10 +1,18 @@
 ![Actions Status](https://github.com/machine-learning-apps/actions-chatops-workaround/workflows/Tests/badge.svg)
 
-# Trigger Actions With ChatOps via PR Labels
+# Trigger Actions With ChatOps via PR Labels or Deployements
 
-This action helps you trigger downstream actions with a custom command made via a comment in a pull request, otherwhise known as [ChatOps](https://www.pagerduty.com/blog/what-is-chatops/).  This action is uses a GitHub App to make an issue label that then can trigger an Action.  This is alternative to the [this Action](https://github.com/marketplace/actions/chatops-for-actions) that uses authenticates as a seperate GitHub App that adds a label you specify to your pull request.  The benefits of this are two-fold:  (1) Unlike a PR-Comment which [triggers Actions workflows on the default branch](https://help.github.com/en/articles/events-that-trigger-workflows#issue-comment-event-issue_comment), the label event will trigger Actions to run on the branch of the PR.  (2) This can prevent you from accidentally executing the chatops command twice as the label event will not fire if the PR is already labeled. 
+This action helps you trigger downstream actions with a custom command made via a comment in a pull request, otherwhise known as [ChatOps](https://www.pagerduty.com/blog/what-is-chatops/). This Action is similar to [this chatops action](https://github.com/machine-learning-apps/actions-chatops), except that this Action can defer to GitHub App to (1) Make labels on a PR or (2) Create a [Deployment](https://developer.github.com/v3/repos/deployments/#create-a-deployment).  The reasons you might want to do this are the following:  
 
-The reason this Action authenticates as a seperate GitHub app (whose authentication credentials you supply) is that you want the label applied on the PR to trigger downstream Actions.  Furthermore, events created by GitHub Actions cannot trigger other Actions - therefore we use a GitHub App for this purpose.
+- By deferring to a GitHub App to create a pull request label or a deployment event, you can trigger a downstream GitHub Action that runs in the context of a pull request.  The reason for using a GitHub App is Actions cannot trigger other Actions.  
+- It can be important to run in the context of a pull request as that is the only way you will see [Check Runs](https://developer.github.com/v3/checks/runs/) for your pull request, so you can monitor the status of your workflows.   
+  - Note that comments on PRs [triggers Actions workflows on the default branch](https://help.github.com/en/articles/events-that-trigger-workflows#issue-comment-event-issue_comment) which is not desireable for ChatOps most of the time.  This Action resolves this issue by piggybacking on a GitHub app to create an event that will trigger Actions workflows on the pull request's branch instead.
+- This can prevent you from accidentally executing the chatops command twice as the label event will not fire if the PR is already labeled or the deployment has already been created.
+
+Therefore, one of the required inputs is the secret key `APP_PEM` for authenticating as a GitHub App which has the following permissions:
+- [Deployment](https://developer.github.com/v3/apps/permissions/#permission-on-deployments): read & write
+- [Pull Requests](https://developer.github.com/v3/apps/permissions/#permission-on-pull-requests): read & write
+
 
 ## Example Usage
 
