@@ -49,27 +49,19 @@ A demonstration of this in action can be found on [this PR](https://github.com/m
 
 ## Mandatory Inputs
 
-  - `APP_PEM`:
-    - description: string version of your PEM file used to authenticate as a GitHub App
-    - required: true
+  - `TRIGGER_PHRASE`: this is the phrase in a PR comment that you want to trigger downstream Actions.  Example - "/deploy-app-test"
 
-  - `APP_ID`:
-    - description: you GITHUB App ID.
-    - required: true
+## Optional Inputs
 
-  - `TRIGGER_PHRASE`:
-    - description: this is the phrase in a PR comment that you want to trigger downstream Actions.  Example - "/deploy-app-test"
-    - required: true
+  If one of the below three arguments are provided, all three must be present. 
 
-  - `INDICATOR_LABEL`:
-    - description: label that wil be added to the PR if a triggering comment is detected.  This is used to trigger downstream Actions with the right context of the PR.
-    - required: false
-    - default: ""
+  - `INDICATOR_LABEL`: label that wil be added to the PR if a triggering comment is detected.  This is used to trigger downstream Actions with the right context of the PR.
 
-  - `TEST_EVENT_PATH`:
-    - description: An alternate place to fetch the payload for testing and debugging when making changes to this Action.  This is set to they system environment variable $GITHUB_EVENT_PATH by default.
-    - require: false
-    - default: ""
+  - `APP_PEM`: description: string version of your PEM file used to authenticate as a GitHub App.  _This is required if the input INDICATOR_LABEL is supplied._
+
+  - `APP_ID`:your GITHUB App ID. _This is required if the input INDICATOR_LABEL is supplied._
+
+  - `TEST_EVENT_PATH`: An alternate place to fetch the payload for testing and debugging when making changes to this Action.  This is set to they system environment variable $GITHUB_EVENT_PATH by default.
 
 
 ## Outputs
