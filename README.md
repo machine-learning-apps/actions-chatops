@@ -58,7 +58,7 @@ jobs:
 
   - `APP_PEM`: description: string version of your PEM file used to authenticate as a GitHub App.  _This is required if the input INDICATOR_LABEL is supplied._
 
-  - `APP_ID`:your GITHUB App ID. _This is required if the input INDICATOR_LABEL is supplied._
+  - `APP_ID`:your GitHub App ID. _This is required if the input INDICATOR_LABEL is supplied._
 
   - `TEST_EVENT_PATH`: An alternate place to fetch the payload for testing and debugging when making changes to this Action.  This is set to the system environment variable $GITHUB_EVENT_PATH by default.
 
