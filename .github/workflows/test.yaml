@@ -85,7 +85,7 @@ jobs:
           PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: final-test
-        uses: ./
+        uses: machine-learning-apps/actions-chatops@master
         with:
           APP_PEM: ${{ secrets.APP_PEM }}
           APP_ID: ${{ secrets.APP_ID }}
