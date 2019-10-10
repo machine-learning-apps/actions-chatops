@@ -1,4 +1,4 @@
-name: 'ChatOps For Actions in Pull Requests'
+name: 'ChatOps For Pull Requests'
 description: Listen for special comments, or chatops commands in the comments of a PR.
 author: Hamel Husain
 inputs:
