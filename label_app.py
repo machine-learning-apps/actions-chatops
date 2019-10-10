@@ -140,7 +140,7 @@ if __name__ == "__main__":
         app_token = app.get_installation_access_token(installation_id=installation_id)
         assert app_token, "Was not able to retrieve token for the App Installation"
         print(f"::add-mask::{app_token}")
-        print(f"::set-output name=APP_TOKEN::{app_token}")
+        print(f"::set-output name=APP_INSTALLATION_TOKEN::{app_token}")
 
     issue_data = payload['issue']
     issue_number = issue_data['number']
