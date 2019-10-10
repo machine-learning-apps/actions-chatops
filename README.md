@@ -79,4 +79,4 @@ jobs:
 
  - `BOOL_TRIGGERED`: true or false depending on if the trigger phrase was detected and this is a pull request.
 
- - `APP_INSTALLATION_TOKEN`: The [installation access token](https://developer.github.com/apps/building-github-apps/authenticating-with-github-apps/#authenticating-as-an-installation) for the GitHub App corresponding to and the current repository.  This is only retrieved if the `APP_PEM` and `APP_ID` inputs are supplied.
+ - `APP_INSTALLATION_TOKEN`: The [installation access token](https://developer.github.com/apps/building-github-apps/authenticating-with-github-apps/#authenticating-as-an-installation) for the GitHub App corresponding to the current repository.  This is only retrieved if the `APP_PEM` and `APP_ID` inputs are supplied.
