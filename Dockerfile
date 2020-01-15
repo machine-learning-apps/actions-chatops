@@ -1,4 +1,3 @@
-FROM python:3-slim-stretch
-
+FROM hamelsmu/chatops
 
 ENTRYPOINT ["python",  "/label_app.py"]
