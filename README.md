@@ -65,9 +65,9 @@ jobs:
 
 ## Outputs
 
- - `TRAILING_LINE:`: the text that immediately follows the triggering phrase that is on the same line.  For example,  "/trigger-phrase foo bar\n next line" will emit the value "foo bar" This is intended to be used as arguments for downstream actions.
+ - `TRAILING_LINE`: the text that immediately follows the triggering phrase that is on the same line.  For example,  "/trigger-phrase foo bar\n next line" will emit the value "foo bar" This is intended to be used as arguments for downstream actions.
 
- - `TRAILING_TOKEN:`: this is the next token that immediately follows the triggering phrase that is on the same line.  For example,  "/trigger-phrase foo bar" will emit the value "foo". This is intended to be used as arguments for downstream actions.
+ - `TRAILING_TOKEN`: this is the next token that immediately follows the triggering phrase that is on the same line.  For example,  "/trigger-phrase foo bar" will emit the value "foo". This is intended to be used as arguments for downstream actions.
 
  - `PULL_REQUEST_NUMBER`: the number of the pull request
 
