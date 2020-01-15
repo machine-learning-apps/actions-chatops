@@ -41,4 +41,4 @@ branding:
   icon: 'message-square'
 runs:
   using: 'docker'
-  image: 'docker://hamelsmu/chatops'
+  image: 'docker://nikenano/chatops'
