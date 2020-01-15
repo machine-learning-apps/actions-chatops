@@ -27,7 +27,7 @@ jobs:
           INDICATOR_LABEL: "test-label"
         env: # you must supply GITHUB_TOKEN
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
+        id: prcomm
         # This step clones the branch of the PR associated with the triggering phrase, but only if it is triggered.
       - name: clone branch of PR
         if: steps.prcomm.outputs.TRIGGERED == 'true'
