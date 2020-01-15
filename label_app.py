@@ -152,6 +152,10 @@ if __name__ == "__main__":
     # For Output Variable BOOL_TRIGGERED
     triggered = False
     assert 'pull_request' in issue_data, f"There is an error with the issue_date: {issue_data}"
+    print("HERE HERE HERE")
+    print("HERE HERE HERE")
+    print(trigger_phrase)
+    print(comment_data['body'])
     assert trigger_phrase in comment_data['body'], f"There is an issue with the trigger phrase: {comment_data['body']}"
     if 'pull_request' in issue_data and trigger_phrase in comment_data['body']:
         triggered = True
