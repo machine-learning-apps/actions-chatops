@@ -30,14 +30,14 @@ jobs:
         id: prcomm
         # This step clones the branch of the PR associated with the triggering phrase, but only if it is triggered.
       - name: clone branch of PR
-        if: steps.prcomm.outputs.TRIGGERED == 'true'
+        if: steps.prcomm.outputs.BOOL_TRIGGERED == 'true'
         uses: actions/checkout@master
         with:
           ref: ${{ steps.prcomm.outputs.SHA }}
 
         # This step is a toy example that illustrates how you can use outputs from the pr-command action
       - name: print variables
-        if: steps.prcomm.outputs.TRIGGERED == 'true'
+        if: steps.prcomm.outputs.BOOL_TRIGGERED == 'true'
         run: echo "${USERNAME} made a triggering comment on PR# ${PR_NUMBER} for ${BRANCH_NAME}"
         env: 
           BRANCH_NAME: ${{ steps.prcomm.outputs.BRANCH_NAME }}
