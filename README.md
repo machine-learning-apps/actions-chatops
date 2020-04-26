@@ -54,7 +54,7 @@ jobs:
 
   If one of the below three arguments are provided, all three must be present. 
 
-  - `INDICATOR_LABEL`: label that wil be added to the PR if a triggering comment is detected.  This is used to trigger downstream Actions with the right context of the PR.
+  - `INDICATOR_LABEL`: label that will be added to the PR if a triggering comment is detected.  This is used to trigger downstream Actions with the right context of the PR.
 
   - `APP_PEM`: description: string version of your PEM file used to authenticate as a GitHub App.  _This is required if the input INDICATOR_LABEL is supplied._
 
