@@ -3,7 +3,7 @@
 # Trigger Actions With ChatOps on Pull Requests
 
 
-This action helps you trigger downstream actions with a custom command made via a comment in a pull request, otherwhise known as [ChatOps](https://www.pagerduty.com/blog/what-is-chatops/).  
+This action helps you trigger downstream actions with a custom command made via a comment in a pull request, otherwise known as [ChatOps](https://www.pagerduty.com/blog/what-is-chatops/).  
 
 Optionally, you may provide credentials to authenticate as a GitHub App and label an issue once a trigger phrase is detected.  Having another app other than the GitHub Action apply a label allows you to create a label event to trigger downstream Actions (since an Action cannot create events that trigger other Actions).
 
