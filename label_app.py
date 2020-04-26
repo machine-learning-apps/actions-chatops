@@ -142,13 +142,13 @@ if __name__ == "__main__":
         print(f"::add-mask::{app_token}")
         print(f"::set-output name=APP_INSTALLATION_TOKEN::{app_token}")
 
+    assert 'issue' in payload and 'comment' in payload, 'Error: this action is designed to operate on the event issue_comment only.'
+
     issue_data = payload['issue']
     issue_number = issue_data['number']
     comment_data = payload['comment']
     username = comment_data['user']['login']
     
-    assert 'issue' in payload and 'comment' in payload, 'Error: this action is designed to operate on the event issue_comment only.'
-
     # For Output Variable BOOL_TRIGGERED
     triggered = False
     if 'pull_request' in issue_data and trigger_phrase in comment_data['body']:
