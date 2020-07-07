@@ -2,7 +2,7 @@
 docker build -t hamelsmu/chatops -f prebuild.Dockerfile .
 
 INPUT_TRIGGER_PHRASE="/test-trigger-comment"
-INPUT_INDICATOR_LABEL="test-successfull"
+INPUT_INDICATOR_LABEL="test-successful"
 TEST_EVENT_PATH="tests/pr_comment_payload.json"
 GITHUB_REPOSITORY="machine-learning-apps/actions-ml-cicd"
 

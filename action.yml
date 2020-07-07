@@ -12,7 +12,7 @@ inputs:
     description: this is the phrase in a PR comment that you want to trigger downstream Actions.  Example - "/deploy-app-test"
     required: true
   INDICATOR_LABEL:
-    description: label that wil be added to the PR if a triggering comment is detected.  This is used to trigger downstream Actions with the right context of the PR.
+    description: label that will be added to the PR if a triggering comment is detected.  This is used to trigger downstream Actions with the right context of the PR.
     required: false
     default: ""
   TEST_EVENT_PATH:

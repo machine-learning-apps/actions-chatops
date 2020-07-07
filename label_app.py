@@ -163,7 +163,7 @@ if __name__ == "__main__":
             issue_handle = get_issue_handle(owner=owner, repo=repo, pem=pem, app_id=app_id, issue_number=issue_number)
             result = issue_handle.add_labels(trigger_label)
             labels = [x.name for x in result]
-            assert result and trigger_label in labels, "issue annotation on PR not successfull."
+            assert result and trigger_label in labels, "issue annotation on PR not successful."
             print(f'Successfully added label {trigger_label} to {issue_handle.state} PR: {issue_handle.html_url}')
             
         # emit output variablesOne w
