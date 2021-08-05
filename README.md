@@ -12,7 +12,10 @@ Optionally, you may provide credentials to authenticate as a GitHub App and labe
 
 ```yaml
 name: Demo
-on: [issue_comment]
+# Prevent the workflow from running again when deleting a comment with the trigger phrase
+on:
+  issue_comment:
+    types: [created]
 
 jobs:
   label-pr:
