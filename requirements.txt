@@ -25,7 +25,7 @@ jupyter-client==6.1.2
 jupyter-console==6.1.0
 jupyter-core==4.6.3
 jupyter==1.0.0
-jwcrypto==0.7
+jwcrypto==1.4
 jwt==0.6.1
 markupsafe==1.1.1
 mistune==0.8.4
